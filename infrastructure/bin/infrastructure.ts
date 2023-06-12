@@ -119,7 +119,7 @@ if (infraProps.forAWS) {
     const ec2InstanceStacks = networkStacks.map(
         (networkStack, idx) => new Ec2Stack(
             app,
-            `${infraProps.stackNamePrefix}-Ec2Stack`,
+            `${infraProps.stackNamePrefix}-Ec2Stack-${idx}`,
             networkStack.vpc,
             networkStack.privateSubnets,
             "10.0.0.0/8",
