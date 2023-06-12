@@ -160,7 +160,7 @@ export class NetworkStack extends Stack {
                     {
                         destinationCidrBlock: '10.0.0.0/8',
                         routeTableId: routeTableId,
-                        transitGatewayId: tgw.ref
+                        transitGatewayId: tgw.attrId
                     }
                 );
             }
@@ -189,7 +189,7 @@ export class NetworkStack extends Stack {
                     {
                         destinationCidrBlock: '10.0.0.0/8',
                         routeTableId: routeTableId,
-                        transitGatewayId: tgw.ref
+                        transitGatewayId: tgw.attrId
                     }
                 );
             }
