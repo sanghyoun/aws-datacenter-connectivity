@@ -1,7 +1,7 @@
 import {aws_ec2, Stack, StackProps} from "aws-cdk-lib";
 import {Construct} from "constructs";
 import {InfrastructureProperties} from "../bin/infrastructure-properties";
-import {ISubnet, IVpc} from "aws-cdk-lib/aws-ec2";
+import {CfnRoute, ISubnet, IVpc} from "aws-cdk-lib/aws-ec2";
 
 export class TgwAttachmentStack extends Stack {
 
@@ -11,7 +11,8 @@ export class TgwAttachmentStack extends Stack {
         infraProps: InfrastructureProperties,
         tgw: aws_ec2.CfnTransitGateway,
         vpc: IVpc,
-        subnets: ISubnet[],
+        publicSubnets: ISubnet[],
+        privateSubnets: ISubnet[],
         props?: StackProps
     ) {
         super(scope, id, props);
@@ -24,7 +25,7 @@ export class TgwAttachmentStack extends Stack {
             {
                 transitGatewayId: tgw.ref,
                 vpcId: vpc.vpcId,
-                subnetIds: [subnets[0].subnetId, subnets[1].subnetId],
+                subnetIds: [privateSubnets[0].subnetId, privateSubnets[1].subnetId],
                 tags: [{
                     key: 'Name',
                     value: `${id}-TGW-Attachment`
@@ -32,6 +33,37 @@ export class TgwAttachmentStack extends Stack {
             }
         );
         tgwAttachment.addDependency(tgw);
+
+        // Attach route table for each public subnets.
+        publicSubnets.forEach(
+            ({routeTable: {routeTableId}}, index) => {
+                new CfnRoute(
+                    this,
+                    `${id}-Public-Route-TGW-${index}`,
+                    {
+                        destinationCidrBlock: '10.0.0.0/8',
+                        routeTableId: routeTableId,
+                        transitGatewayId: tgw.ref
+                    }
+                ).addDependency(tgwAttachment);
+            }
+        );
+
+        // Attach route table for each private subnets.
+        privateSubnets.forEach(
+            ({routeTable: {routeTableId}}, index) => {
+                new CfnRoute(
+                    this,
+                    `${id}-Private-Route-TGW-${index}`,
+                    {
+                        destinationCidrBlock: '10.0.0.0/8',
+                        routeTableId: routeTableId,
+                        transitGatewayId: tgw.ref
+                    }
+                ).addDependency(tgwAttachment);
+            }
+        );
+
     }
 
 }

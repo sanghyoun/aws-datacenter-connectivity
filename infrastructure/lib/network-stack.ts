@@ -135,37 +135,37 @@ export class NetworkStack extends Stack {
         this.privateSubnets = [privateSubnetA, privateSubnetC];
         this.allSubnets = this.publicSubnets.concat(this.privateSubnets);
 
-        // const privateRoute = new CfnRoute(
-        //     this,
-        //     `${id}-Private-Route-NATGW`,
-        //     {
-        //         destinationCidrBlock: '0.0.0.0/0',
-        //         routeTableId: routeTableId,
-        //         // natGatewayId: (index == 0 ? ngwA.ref : ngwC.ref)
-        //         natGatewayId: ngwA.ref
-        //     }
-        // );
-        // this.privateSubnets.forEach(
+        // // const privateRoute = new CfnRoute(
+        // //     this,
+        // //     `${id}-Private-Route-NATGW`,
+        // //     {
+        // //         destinationCidrBlock: '0.0.0.0/0',
+        // //         routeTableId: routeTableId,
+        // //         // natGatewayId: (index == 0 ? ngwA.ref : ngwC.ref)
+        // //         natGatewayId: ngwA.ref
+        // //     }
+        // // );
+        // // this.privateSubnets.forEach(
+        // //     ({routeTable: {routeTableId}}, index) => {
+        // //         privateRoute
+        // //     }
+        // // );
+        //
+        // // Attach route table for each public subnets.
+        // this.publicSubnets.forEach(
         //     ({routeTable: {routeTableId}}, index) => {
-        //         privateRoute
+        //         new CfnRoute(
+        //             this,
+        //             `${id}-Public-Route-TGW-${index}`,
+        //             {
+        //                 destinationCidrBlock: '10.0.0.0/8',
+        //                 routeTableId: routeTableId,
+        //                 transitGatewayId: tgw.attrId
+        //             }
+        //         );
         //     }
         // );
-
-        // Attach route table for each public subnets.
-        this.publicSubnets.forEach(
-            ({routeTable: {routeTableId}}, index) => {
-                new CfnRoute(
-                    this,
-                    `${id}-Public-Route-TGW-${index}`,
-                    {
-                        destinationCidrBlock: '10.0.0.0/8',
-                        routeTableId: routeTableId,
-                        transitGatewayId: tgw.attrId
-                    }
-                );
-            }
-        );
-
+        //
         // Attach route table for each private subnets.
         this.privateSubnets.forEach(
             ({routeTable: {routeTableId}}, index) => {
@@ -181,19 +181,19 @@ export class NetworkStack extends Stack {
                 );
             }
         );
-        this.privateSubnets.forEach(
-            ({routeTable: {routeTableId}}, index) => {
-                new CfnRoute(
-                    this,
-                    `${id}-Private-Route-TGW-${index}`,
-                    {
-                        destinationCidrBlock: '10.0.0.0/8',
-                        routeTableId: routeTableId,
-                        transitGatewayId: tgw.attrId
-                    }
-                );
-            }
-        );
+        // this.privateSubnets.forEach(
+        //     ({routeTable: {routeTableId}}, index) => {
+        //         new CfnRoute(
+        //             this,
+        //             `${id}-Private-Route-TGW-${index}`,
+        //             {
+        //                 destinationCidrBlock: '10.0.0.0/8',
+        //                 routeTableId: routeTableId,
+        //                 transitGatewayId: tgw.attrId
+        //             }
+        //         );
+        //     }
+        // );
 
 
         // Define arrow function that tags subnets.
