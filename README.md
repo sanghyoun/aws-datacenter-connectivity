@@ -1,18 +1,22 @@
-# Application Modernization
+# 하이브리드 클라우드 운영
 
-## 변경 사항<br>
-***[2023-06-03]***
-1. RDS CloudFormation 템플릿 포함 (Include)
-2. FlightSpecial 마이크로서비스를 위한 빌드 파이프라인 추가
-   1. ECR 컨테이너 리포지터리
-   2. CodeCommit, CodeBuild, CodePipeline
-3. FlightSpecial 마이크로서비스를 위한 GitOps 배포 CodeCommit 리포지터리
-4. FlightSpecial Polyglot 데이터베이스를 위한 PostgreSQL 자원 생성 CDK Stack 추가
+오늘은 온프레미스 인프라와 AWS를 연계하는 하이브리드 클라우드 운영을 알아보도록 하겠습니다.<br>
+대개의 경우 클라우드 마이그레이션 과정은 단기간에 마무리되지 않으므로, 기존의 IT 환경과 (예: 온프레미스 데이터센터)와 일정 기간 연계하여 운영하는 것이 일반적입니다.
 
+온프레미스 데이터센터와 AWS 클라우드를 연결하는 기술은 일반적으로 Site-to-Site VPN이나 Direct Connect 등을 사용하며, 이렇게 연결된 후에는 다양한 형태의 IT 인프라가 논리적/물리적으로 연계되게 됩니다.
+
+오늘은 Site-to-Site VPN을 사용하여 가상의 온프레미스 데이터센터와 AWS 클라우를 연결하고 이를 바탕으로 DNS를 연계시켜 보도록 하겠습니다.
+
+참고로 이 핸즈온 가이드는 아래 두 워크샵을 조합하여 정리한 것입니다.<br>
+- [Networking Immersion Day](https://catalog.workshops.aws/networking/en-US/beginner/lab1)
+- [하이브리드 DNS](https://aws-labs.net/winlab0-buildinfra/hybriddns.html)
 
 ## Agenda
 
-- Sample Application 소개
+1. 환경 구성 (2인 1조)<br>
+   - [AWS 클라우드 측 구성](./docs/aws-cloud-setup.md)
+   - 데이터센터 측 구성
+2. 
 - Monolith - TravelBuddy 마이그레이션
   - 이론: Monolith란?
   - 실습 환경 구성

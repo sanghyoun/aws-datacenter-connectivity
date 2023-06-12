@@ -66,15 +66,6 @@ const iamStack = new IamStack(
 /**
  * Network stack.
  */
-// const networkStack = new NetworkStack(
-//     app,
-//     `${infraProps.stackNamePrefix}-NetworkStack`,
-//     infraProps,
-//     {
-//         env
-//     }
-// );
-
 const vpcCidrs = infraProps.publicSubnetCidrsAZa ?? (infraProps.forAWS ? AWS_VPC_CIDRS : DC_VPC_CIDRS);
 const publicSubnetCidrsAZa = infraProps.publicSubnetCidrsAZa ?? (infraProps.forAWS ? AWS_PUBLIC_SUBNET_CIDRS_AZa : DC_PUBLIC_SUBNET_CIDRS_AZa);
 const publicSubnetCidrsAZb = infraProps.publicSubnetCidrsAZa ?? (infraProps.forAWS ? AWS_PUBLIC_SUBNET_CIDRS_AZb : DC_PUBLIC_SUBNET_CIDRS_AZb);
@@ -121,104 +112,22 @@ if (infraProps.forAWS) {
             {env}
         )
     );
+
+    /**
+     * EC2 instances and some possible others.
+     */
+    const ec2InstanceStacks = networkStacks.map(
+        (networkStack, idx) => new Ec2Stack(
+            app,
+            `${infraProps.stackNamePrefix}-Ec2Stack`,
+            networkStack.vpc,
+            networkStack.privateSubnets,
+            "10.0.0.0/8",
+            iamStack.adminRole,
+            {
+                env
+            }
+        )
+    );
 }
 
-// /**
-//  * RDS bastion instances and some possible others.
-//  */
-// const ec2Stack = new Ec2Stack(
-//     app,
-//     `${infraProps.stackNamePrefix}-Ec2Stack`,
-//     networkStack.vpc,
-//     networkStack.eksPublicSubnets,
-//     iamStack.adminRole,
-//     {
-//         env
-//     }
-// );
-//
-// /**
-//  * EKS Cluster Stack.
-//  */
-// const eksStarck = new EksStack(
-//     app,
-//     `${infraProps.stackNamePrefix}-EksStack`,
-//     networkStack.vpc,
-//     networkStack.eksPublicSubnets,
-//     networkStack.eksPrivateSubnets,
-//     `${infraProps.stackNamePrefix}-EksCluster`,
-//     "m2m",
-//     infraProps.eksClusterAdminIamUser ?? "",
-//     infraProps.eksClusterAdminIamRole ?? "",
-//     {
-//         env
-//     }
-// );
-// eksStarck.addDependency(networkStack);
-//
-// /**
-//  * Build and delivery stack.
-//  */
-// const buildAndDeliveryStack = new BuildDeliveryStack(
-//     app,
-//     `${infraProps.stackNamePrefix}-BuildAndDeliveryStack`,
-//     eksStarck.eksCluster,
-//     eksStarck.eksDeployRole,
-//     {
-//         env
-//     }
-// );
-// buildAndDeliveryStack.addDependency(eksStarck);
-//
-// /**
-//  * FlightSpecial build and delivery stack.
-//  */
-// const flightspecialBuildandDeliveryStack = new BuildDeliveryStack(
-//     app,
-//     `${infraProps.stackNamePrefix}-FlightSpecialCICDStack`,
-//     eksStarck.eksCluster,
-//     eksStarck.eksDeployRole,
-//     {
-//         env
-//     }
-// );
-// flightspecialBuildandDeliveryStack.addDependency(eksStarck);
-//
-// /**
-//  * SSM Stack.
-//  */
-// const ssmStack = new SsmStack(
-//     app,
-//     `${infraProps.stackNamePrefix}-SsmStack`,
-//     {
-//         env
-//     }
-// );
-//
-// /**
-//  * [2023-06-03] RDS legacy stack for legacy TravelBuddy application.
-//  */
-// const rdsLegacyStack = new RdsLegacyStack(
-//     app,
-//     `${infraProps.stackNamePrefix}-RdsLegacyStack`,
-//     networkStack.vpc,
-//     networkStack.eksPrivateSubnets,
-//     {
-//         env
-//     }
-// );
-// rdsLegacyStack.addDependency(networkStack);
-//
-// /**
-//  * [2023-06-03] Postgres Database stack for FlightSpecial microservice.
-//  */
-// const flightspecialDatabaseStack = new FlightSpecialDatabaseStack(
-//     app,
-//     `${infraProps.stackNamePrefix}-FlightSpecialDatabaseStack`,
-//     networkStack.vpc,
-//     networkStack.eksPrivateSubnets,
-//     {
-//         env
-//     }
-// );
-// flightspecialDatabaseStack.addDependency(networkStack);
