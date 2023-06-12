@@ -113,7 +113,7 @@ if (infraProps.forAWS) {
     const tgwAttachmentStacks = networkStacks.map(
         (networkStack, idx) => new TgwAttachmentStack(
             app,
-            `${infraProps.stackNamePrefix}-TgwAttachmentStack`,
+            `${infraProps.stackNamePrefix}-TgwAttachmentStack-${idx}`,
             infraProps,
             tgwStack.tgw,
             networkStack.vpc,

@@ -15,7 +15,7 @@ export class TgwStack extends Stack {
         super(scope, id, props);
 
         // Create TGW.
-        const tgw = new aws_ec2.CfnTransitGateway(
+        this.tgw = new aws_ec2.CfnTransitGateway(
             this,
             `${id}-TGW`,
             {

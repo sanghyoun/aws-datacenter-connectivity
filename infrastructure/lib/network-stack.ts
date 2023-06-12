@@ -88,20 +88,21 @@ export class NetworkStack extends Stack {
         );
 
         // Create another NAT gateway in this public subnet-c.
-        const ngwC = new CfnNatGateway(
-            this,
-            `${id}-NATGateway-c`,
-            {
-                subnetId: publicSubnetC.subnetId,
-                allocationId: new CfnEIP(
-                    this,
-                    `${id}-NATGatewayEIP-c`,
-                    {
-                        domain: 'vpc'
-                    }
-                ).attrAllocationId,
-            }
-        );
+        // [2023-06-12] Only one NAT per VPC to avoid limit.
+        // const ngwC = new CfnNatGateway(
+        //     this,
+        //     `${id}-NATGateway-c`,
+        //     {
+        //         subnetId: publicSubnetC.subnetId,
+        //         allocationId: new CfnEIP(
+        //             this,
+        //             `${id}-NATGatewayEIP-c`,
+        //             {
+        //                 domain: 'vpc'
+        //             }
+        //         ).attrAllocationId,
+        //     }
+        // );
 
         console.log(`Region: ${props?.env?.region}`);
 
@@ -142,7 +143,8 @@ export class NetworkStack extends Stack {
                     {
                         destinationCidrBlock: '0.0.0.0/0',
                         routeTableId: routeTableId,
-                        natGatewayId: (index == 0 ? ngwA.ref : ngwC.ref)
+                        // natGatewayId: (index == 0 ? ngwA.ref : ngwC.ref)
+                        natGatewayId: ngwA.ref
                     }
                 );
             }
@@ -212,7 +214,8 @@ export class NetworkStack extends Stack {
         new cdk.CfnOutput(
             this,
             `${id}-VPCCidr`, {
-                exportName: "M2MNetworkStackVPCCidr",
+                // exportName: "M2MNetworkStackVPCCidr",
+                exportName: `${id}-NetworkStack-Vpc-Cidr`,
                 value: this.vpc.vpcCidrBlock
             }
         );
