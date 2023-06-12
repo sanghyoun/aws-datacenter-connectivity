@@ -74,11 +74,21 @@ const privateSubnetCidrsAZa = infraProps.publicSubnetCidrsAZa ?? (infraProps.for
 const privateSubnetCidrsAZb = infraProps.publicSubnetCidrsAZa ?? (infraProps.forAWS ? AWS_PRIVATE_SUBNET_CIDRS_AZb : DC_PRIVATE_SUBNET_CIDRS_AZb);
 const privateSubnetCidrsAZc = infraProps.publicSubnetCidrsAZa ?? (infraProps.forAWS ? AWS_PRIVATE_SUBNET_CIDRS_AZc : DC_PRIVATE_SUBNET_CIDRS_AZc);
 
+const tgwStack = new TgwStack(
+    app,
+    `${infraProps.stackNamePrefix}-TgwStack`,
+    infraProps,
+    {
+        env
+    }
+);
+
 const networkStacks = vpcCidrs.map((vpcCidr, idx) =>
     new NetworkStack(
         app,
         `${infraProps.stackNamePrefix}-NetworkStack-${idx}`,
         infraProps,
+        tgwStack.tgw,
         vpcCidr,
         publicSubnetCidrsAZa[idx],
         publicSubnetCidrsAZc[idx],
@@ -89,45 +99,46 @@ const networkStacks = vpcCidrs.map((vpcCidr, idx) =>
         }
     )
 );
+networkStacks.forEach(networkStack => networkStack.addDependency(tgwStack));
 
-if (infraProps.forAWS) {
-    const tgwStack = new TgwStack(
+// const tgwStack = new TgwStack(
+//     app,
+//     `${infraProps.stackNamePrefix}-TgwStack`,
+//     infraProps,
+//     {
+//         env
+//     }
+// );
+// networkStacks.map(networkStack => tgwStack.addDependency(networkStack));
+
+const tgwAttachmentStacks = networkStacks.map(
+    (networkStack, idx) => new TgwAttachmentStack(
         app,
-        `${infraProps.stackNamePrefix}-TgwStack`,
+        `${infraProps.stackNamePrefix}-TgwAttachmentStack-${idx}`,
         infraProps,
+        tgwStack.tgw,
+        networkStack.vpc,
+        networkStack.privateSubnets,
+        {env}
+    )
+);
+tgwAttachmentStacks.forEach((item, idx) => item.addDependency(networkStacks[idx]));
+
+/**
+ * EC2 instances and some possible others.
+ */
+const ec2InstanceStacks = networkStacks.map(
+    (networkStack, idx) => new Ec2Stack(
+        app,
+        `${infraProps.stackNamePrefix}-Ec2Stack-${idx}`,
+        networkStack.vpc,
+        networkStack.privateSubnets,
+        "10.0.0.0/8",
+        iamStack.adminRole,
         {
             env
         }
-    );
-    networkStacks.map(networkStack => tgwStack.addDependency(networkStack));
-
-    const tgwAttachmentStacks = networkStacks.map(
-        (networkStack, idx) => new TgwAttachmentStack(
-            app,
-            `${infraProps.stackNamePrefix}-TgwAttachmentStack-${idx}`,
-            infraProps,
-            tgwStack.tgw,
-            networkStack.vpc,
-            networkStack.privateSubnets,
-            {env}
-        )
-    );
-
-    /**
-     * EC2 instances and some possible others.
-     */
-    const ec2InstanceStacks = networkStacks.map(
-        (networkStack, idx) => new Ec2Stack(
-            app,
-            `${infraProps.stackNamePrefix}-Ec2Stack-${idx}`,
-            networkStack.vpc,
-            networkStack.privateSubnets,
-            "10.0.0.0/8",
-            iamStack.adminRole,
-            {
-                env
-            }
-        )
-    );
-}
+    )
+);
+ec2InstanceStacks.forEach((item, idx) => item.addDependency(networkStacks[idx]));
 
