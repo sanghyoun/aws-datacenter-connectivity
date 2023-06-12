@@ -15,7 +15,7 @@
 
 1. 환경 구성 (2인 1조)<br>
    - [AWS 클라우드 측 구성](./docs/aws-cloud-setup.md)
-   - 데이터센터 측 구성
+   - [데이터센터 측 구성](/.docs/datacenter-setup.md)
 2. 
 - Monolith - TravelBuddy 마이그레이션
   - 이론: Monolith란?
