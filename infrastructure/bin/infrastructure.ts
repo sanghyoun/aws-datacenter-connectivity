@@ -118,6 +118,7 @@ const tgwAttachmentStacks = networkStacks.map(
         infraProps,
         tgwStack.tgw,
         networkStack.vpc,
+        networkStack.publicSubnets,
         networkStack.privateSubnets,
         {env}
     )
