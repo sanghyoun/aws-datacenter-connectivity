@@ -10,32 +10,32 @@ export class IamStack extends Stack {
     constructor(scope: Construct, id: string, infraProps: InfrastructureProperties, props: StackProps) {
         super(scope, id, props);
 
-        const m2mAdminRole = new aws_iam.Role(
+        const ec2AdminRole = new aws_iam.Role(
             this,
             `${id}-${props?.env?.region}-AdminRole`,
             {
-                roleName: "m2m-admin",
+                roleName: "ec2-admin",
                 assumedBy: new aws_iam.ServicePrincipal('ec2.amazonaws.com')
             }
         );
-        m2mAdminRole.addManagedPolicy(aws_iam.ManagedPolicy.fromAwsManagedPolicyName("AdministratorAccess"));
+        ec2AdminRole.addManagedPolicy(aws_iam.ManagedPolicy.fromAwsManagedPolicyName("AdministratorAccess"));
 
         new aws_iam.CfnInstanceProfile(
             this,
             `${id}-${props?.env?.region}-AdminInstanceProfile`,
             {
-                instanceProfileName: "m2m-admin",
-                roles: [m2mAdminRole.roleName]
+                instanceProfileName: "ec2-instance-admin",
+                roles: [ec2AdminRole.roleName]
             }
         );
 
-        this.adminRole = m2mAdminRole;
+        this.adminRole = ec2AdminRole;
 
         // Print.
         new cdk.CfnOutput(
             this,
-            `TravelBuddy M2M EC2 Admin Role ARN`, {
-                value: m2mAdminRole.roleArn
+            `EC2 Admin Role ARN`, {
+                value: ec2AdminRole.roleArn
             }
         );
     }
