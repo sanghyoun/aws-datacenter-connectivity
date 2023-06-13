@@ -268,7 +268,8 @@ npm run deploy
 ```
 
 자원이 생성되는 동안에 AWS 클라우드 측에서 어떤 자원을 생성하고 있는지 잠깐 살펴보도록 하겠습니다.<br>
-* [하이브리드 클라우드 측 환경](https://catalog.workshops.aws/networking/en-US/beginner/lab1)<br>
+* [멀티 VPC AWS 클라우드 환경](https://catalog.workshops.aws/networking/en-US/beginner/lab1)<br>
   * (출처: Networking Immersion Day 워크샵)<br>
+  * ![멀티 VPC AWS 어카운트 환경](./assets/aws-cloud-transit-gateway.png)
 
 

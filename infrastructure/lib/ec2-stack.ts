@@ -32,6 +32,16 @@ export class Ec2Stack extends Stack {
             aws_ec2.Port.allIcmp(),
             "Allow all ICMP traffic from the specified CIDR"
         );
+        ec2SecurityGroup.addIngressRule(
+            aws_ec2.Peer.ipv4(securityGroupSourceCidr1),
+            aws_ec2.Port.tcp(53),
+            "Allow TCP 53 (Route 53) traffic from the specified CIDR"
+        );
+        ec2SecurityGroup.addIngressRule(
+            aws_ec2.Peer.ipv4(securityGroupSourceCidr1),
+            aws_ec2.Port.udp(53),
+            "Allow UDP 53 (Route 53) traffic from the specified CIDR"
+        );
 
         /*
          * Create the bastion host.
